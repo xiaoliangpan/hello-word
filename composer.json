@@ -1,7 +1,29 @@
 {
-  "name" : "wulove52/hello-word",
-  "php" : ">=5.6.0",
-  "required" : {
-      "monolog/monolog": "1.0.*"
+  "name": "wulove52/hello-word",
+  "description": "阿里云通信(阿里大于)SDK",
+  "keywords": [
+    "阿里大于",
+    "阿里大鱼",
+    "阿里云通信"
+  ],
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/wulove52/hello-word/issues",
+    "source": "https://github.com/wulove52/hello-word"
+  },
+  "authors": [
+    {
+      "name": "wulove52",
+      "email": "243506597@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "guzzlehttp/guzzle": ">=5.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Wulove52\\HelloWord\\": "src/"
+    }
   }
 }
