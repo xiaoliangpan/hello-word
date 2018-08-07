@@ -1,0 +1,7 @@
+{
+  "name" : "wulove52/hello-world",
+  "php" : ">=5.6.0",
+  "required" : {
+      "monolog/monolog": "1.0.*"
+  }
+}
