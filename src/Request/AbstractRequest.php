@@ -14,11 +14,7 @@ abstract class AbstractRequest
      */
     protected $params = [];
 
-    /**
-     * 返回Api名
-     * @return mixed
-     */
-    abstract public function getMethod();
+   
 
     /**
      * 返回请求参数

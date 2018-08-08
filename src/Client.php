@@ -84,22 +84,42 @@ class Client
      */
     public function send(AbstractRequest $request)
     {
-        $params = array_merge($request->getParams(), [
+        $params = array_merge([
             "SignatureMethod" => "HMAC-SHA1",
             "SignatureNonce" => uniqid(mt_rand(0,0xffff), true),
             "SignatureVersion" => "1.0",
             "AccessKeyId" => $this->appKey,
             "Timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
             "Format" => "JSON",
-        ]);
+        ],$request->getParams());
 
-        // 生成签名
-        $params['Signature'] = $this->buildSignature($params, $this->appSecret);
+        $params = array_merge($params,array(
+            "RegionId" => "cn-hangzhou",
+            "Action" => "SendSms",
+            "Version" => "2017-05-25",
+        ));
+
+        // 将参数Key按字典顺序排序
+        ksort($params);
+
+        $sortedQueryStringTmp  = '';
+        foreach ($params as $key => $value) {
+
+            $sortedQueryStringTmp  .= "&" . static::encode($key) . "=" . static::encode($value);
+        }
+
+        $signature = $this->buildSignature($sortedQueryStringTmp, $this->appSecret);
 
         $client = new GuzzleHttp();
 
         // 发起请求
-        $response = $client->get($this->getUrl() . '?' . build_query($params));
+
+        $response = $client->get($this->getUrl() . '?Signature='.$signature.$sortedQueryStringTmp,
+            [
+                'headers' => [
+                    "x-sdk-client" => "php/2.0.0"
+                ]
+            ]);
 
         return new Response($response, $request);
     }
@@ -140,19 +160,23 @@ class Client
      * @param $appSecret
      * @return string
      */
-    static private function buildSignature(array $parameters, $appSecret)
+    static private function buildSignature($sortedQueryStringTmp, $appSecret)
     {
         // 将参数Key按字典顺序排序
-        ksort($parameters);
+        $stringToSign = "GET&%2F&" . static::encode(substr($sortedQueryStringTmp, 1));
 
-        $sortedQueryStringTmp  = [];
-        foreach ($parameters as $key => $value) {
-            $sortedQueryStringTmp   .= "&" . $key . "=" . $value;
-        }
+        $sign = base64_encode(hash_hmac("sha1", $stringToSign, $appSecret . "&",true));
 
-        $stringToSign = "GET&%2F&" . substr($sortedQueryStringTmp, 1);
+        return static::encode($sign);
 
-        return base64_encode(hash_hmac("sha1", $stringToSign, $appSecret . "&",true));
+    }
 
+    static public function encode($str)
+    {
+        $res = urlencode($str);
+        $res = preg_replace("/\+/", "%20", $res);
+        $res = preg_replace("/\*/", "%2A", $res);
+        $res = preg_replace("/%7E/", "~", $res);
+        return $res;
     }
 }
