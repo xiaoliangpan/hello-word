@@ -14,7 +14,7 @@ abstract class AbstractRequest
      */
     protected $params = [];
 
-   
+
 
     /**
      * 返回请求参数

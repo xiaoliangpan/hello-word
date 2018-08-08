@@ -50,6 +50,12 @@ class Response
     protected $error;
 
     /**
+     * 错误消息
+     * @var string|null
+     */
+    protected $errors;
+
+    /**
      * 错误代码
      * @var string|null
      */
@@ -70,29 +76,16 @@ class Response
 
         $this->content = json_decode($this->original, true);
 
-        if (array_key_exists('error_response', $this->content)) {
-
-            $error = $this->content['error_response'];
-
-            if (array_key_exists('sub_code', $error)) {
-                $this->errorCode = $error['sub_code'];
-            } elseif (array_key_exists('code', $error)) {
-                $this->errorCode = $error['code'];
-            }
-
-            if (array_key_exists('sub_msg', $error)) {
-                $this->error = $error['sub_msg'];
-            } elseif (array_key_exists('msg', $error)) {
-                $this->error = $error['msg'];
-            } else {
-                $this->error = 'UnKnown Error';
-            }
-
-        } else {
-
+        if (array_key_exists('Code', $this->content) && $this->content['Code'] == 'OK')  {
             $this->success = true;
-            $this->data = $request->parseData($this->content);
+            $this->data = json_encode($this->content,true);
+
+        }elseif (array_key_exists('Code', $this->content)) {
+            $this->errorCode = $this->content['Code'];
+            $this->error = $this->content['Message'];
+            $this->errors = $this->content;
         }
+
     }
 
     /**
@@ -156,6 +149,15 @@ class Response
     public function getError()
     {
         return $this->error;
+    }
+
+    /**
+     * 返回错误消息
+     * @return null|string
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**
