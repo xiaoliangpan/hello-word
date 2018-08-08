@@ -22,15 +22,15 @@ class Sms extends AbstractRequest
      * @param array $smsParam 模板变量
      * @param string $extend 回传参数
      */
-    public function __construct($recNum, $smsTemplateCode, $smsFreeSignName, array $smsParam = [], $extend = '')
+    public function __construct($phoneNumbers, $templateCode, $signName, array $templateParam = [], $outId = '', $smsUpExtendCode = '')
     {
         $this->setParams([
-            'sms_type' => 'normal',
-            'rec_num' => $recNum,
-            'sms_template_code' => $smsTemplateCode,
-            'sms_free_sign_name' => $smsFreeSignName,
-            'sms_param' => $smsParam,
-            'extend' => $extend
+            'PhoneNumbers' => $phoneNumbers,
+            'TemplateCode' => $templateCode,
+            'SignName' => $signName,
+            'TemplateParam' => $templateParam,
+            'OutId' => $outId,
+            'SmsUpExtendCode' => $smsUpExtendCode
         ]);
     }
 
@@ -42,20 +42,13 @@ class Sms extends AbstractRequest
     {
         $params = parent::getParams();
 
-        if (is_array($params['sms_param'])) {
-            $params['sms_param'] = json_encode($params['sms_param']);
+        if (is_array($params['TemplateParam'])) {
+            $params['TemplateParam'] = json_encode($params['TemplateParam']);
         }
 
         return $params;
     }
 
-    /**
-     * 返回接口名
-     * @return string
-     */
-    public function getMethod()
-    {
-        return 'alibaba.aliqin.fc.sms.num.send';
-    }
+   
 }
 
