@@ -25,11 +25,11 @@ class Alidayu
     protected static $client = null;
 
     /**
-     * 阿里大于配置
+     * 阿里大于配置 master
      * @var array
      */
     protected static $config = [];
-    
+
     /**
      * 设置配置
      * @param array $config
