@@ -29,8 +29,7 @@ class Alidayu
      * @var array
      */
     protected static $config = [];
-
-
+    
     /**
      * 设置配置
      * @param array $config
